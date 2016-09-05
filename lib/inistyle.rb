@@ -3,8 +3,9 @@ class Inistyle
   @@section_regexp = /\s*\[([^\]]+)\]\s*/
   @@data_regexp = /([^#]*)#?.*/   
 
-  def initialize(filename,data=false)
+  def initialize(filename, data=false, split=false)
     @filename = filename
+    @split = split
     if data
       @data = data
     elsif File.exists?(filename)
@@ -26,16 +27,32 @@ class Inistyle
       else
         # strip comments
         if line =~ @@data_regexp
+          if @split
+            entry = $1.split("\s+")
+          else
+            entry = $1
+          end
           @data[current_section].push($1)
         else 
-          puts "blank"
         end
       end
     end
   end
 
   def save
-    File.write(@filename, @data.join("\n"))
+    open(@filename, 'w') { |f|
+      @data.keys { |key|
+        f.puts "[#{key}]"
+        @data[key].each { |entry|
+          if entry.kind_of?(Array)
+            line = entry.join(' ')
+          else
+            line = entry
+          end
+          f.puts line
+        }
+      }
+    }
   end
 
   # Public: Get the section Hash by name. If the section does not exist, then
