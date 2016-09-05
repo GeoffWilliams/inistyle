@@ -1,7 +1,7 @@
 require "inistyle/version"
 
 module Inistyle
-  class Inistyle
+  class IniStyle
     @@section_regexp = /\s*\[([^\]]+)\]\s*/
     @@data_regexp = /([^#]*)#?.*/   
 
