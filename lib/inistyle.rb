@@ -1,6 +1,6 @@
 require "inistyle/version"
 
-module Inistyle
+#module IniStyle
   class IniStyle
     @@section_regexp = /\s*\[([^\]]+)\]\s*/
     @@data_regexp = /([^#]*)#?.*/   
@@ -24,18 +24,19 @@ module Inistyle
         if line =~ @@section_regexp
           # new section found
           current_section = $1
-        puts $1 
          @data[current_section] = []
         else
           # strip comments
           if line =~ @@data_regexp
-            if @split
-              entry = $1.split("\s+")
-            else
-              entry = $1
+            captured = $1
+            if captured !~ /^\s*$/
+              if @split
+                entry = captured.strip.split("\s+")
+              else
+                entry = captured.strip
+              end
+              @data[current_section].push(entry)
             end
-            @data[current_section].push($1)
-          else 
           end
         end
       end
@@ -100,4 +101,4 @@ module Inistyle
       @data = data
     end
   end
-end
+#end
